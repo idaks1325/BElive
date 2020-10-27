@@ -110,6 +110,7 @@ class Animal: ObjectNode,AnimalEvent {
                                 direction = .top
                             }
                         }
+                        UserDefaults.standard.set(world.point, forKey: "point")
                         world.run(nodeDirection: direction)
                         
                     }

@@ -167,8 +167,8 @@ class World:SKScene, SKPhysicsContactDelegate{
         }else{
             ud.set(true, forKey: "played")
         }
+        ud.set(self.maps.point, forKey: "point")
         ud.set(3, forKey: "zanki")
-        
         ud.set(believer.status.maxHP, forKey: "status_hp")
         ud.set(0, forKey: "status_exp")
     }
@@ -232,6 +232,7 @@ class World:SKScene, SKPhysicsContactDelegate{
                 
             }
         }
+        self.point = UserDefaults.standard.integer(forKey: "point")
     }
     
     func getNode(_ object: ObjectType) -> SKNode{

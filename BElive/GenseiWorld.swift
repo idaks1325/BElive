@@ -14,12 +14,13 @@ class GenseiWorld: World{
             "thema": "Gensei",
             "animals": ["DeadProteo", "Proteo", "Owl", "Owl2"],
             "size": [5,5],
+            "point": 0,
             "layout": [
                 [ ["L","B","R"], 5, [0] ],
                 [ [], 0, [] ],
                 [ [], 0, [] ],
                 [ [], 0, [] ],
-                [ ["R"], 0, [3] ],
+                [ [], 0, [] ],
                 
                 [ ["L"], 5, [0] ],
                 [ ["B"], 6, [] ],
@@ -58,7 +59,6 @@ class GenseiWorld: World{
         //self.believer.root(range: 40, length: 160)
         self.believer.root()
         
-        self.point = 5
         self.run(nodeDirection: .under, runAction: false)
     }
     

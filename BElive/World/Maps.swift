@@ -12,11 +12,13 @@ struct Maps {
     var animals:[String] = []
     var layout:[[Any]] = []
     var thema = ""
+    var point = 0
     var size: (x:Int, y:Int) = (0, 0)
     init(_ data: [String : Any]){
         self.animals = data["animals"]! as! [String]
         self.layout = data["layout"]! as! [[Any]]
         self.thema = data["thema"]! as! String
+        self.point = data["point"] as! Int
         
         let s = data["size"]! as! [Int]
         self.size = (s[0], s[1])
