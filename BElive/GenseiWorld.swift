@@ -76,13 +76,13 @@ class GenseiWorld: World{
         let animals = self.getNode(.animal)
         for a in animals.children{
             let animal = a as! Animal
-            if(animal.rootEvent == nil){
+            if (animal != self.believer){
                 animal.removeFromParent()
             }
         }
-        self.getNode(.block).removeAllChildren()
         self.getNode(.energy).removeAllChildren()
         self.gauge.removeAllChildren()
+        self.getNode(.block).run(SKAction.fadeAlpha(to: 0, duration: 5))
         
         //setting
         let smoke = SKSpriteNode(imageNamed: "smoke")
