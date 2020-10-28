@@ -41,9 +41,11 @@ struct Status {
         sight:Int = 0, maxHP:CGFloat = 0, atk:CGFloat = 0, exp:CGFloat = 0
     ){
         self.name = name
-        self.size = size
+        self.size = CGSize(
+            width: size.width / 375 * world.size.width,
+            height: size.height / 667 * world.size.height
+        )
         self.duration = duration
-        
         self.sight = sight
         self.maxHP = maxHP
         self.hp = CGFloat.random(in: maxHP/2...maxHP)

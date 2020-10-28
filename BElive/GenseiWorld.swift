@@ -65,68 +65,73 @@ class GenseiWorld: World{
     override func didViewArea() {
         //hp0以下の場合もある > 消える
         //下
-        if(self.point == 0){
+        if(self.point == 4){
             DinnerEvent()
             
         }
     }
     
     func DinnerEvent(){
-        //delete nodes
-        let animals = self.getNode(.animal)
-        for a in animals.children{
-            let animal = a as! Animal
-            if (animal != self.believer){
-                animal.removeFromParent()
-            }
-        }
-        self.getNode(.energy).removeAllChildren()
-        self.gauge.removeAllChildren()
-        self.getNode(.block).run(SKAction.fadeAlpha(to: 0, duration: 5))
-        
-        //setting
-        let smoke = SKSpriteNode(imageNamed: "smoke")
-        smoke.position = self.point_center() + CGPoint(x: self.size.width/2, y: self.size.height/2)
-        smoke.size = CGSize(width: self.size.width, height: (self.size.width / smoke.size.width) * smoke.size.height)
-        self.addChild(smoke)
-        let action = SKAction.sequence([SKAction.fadeAlpha(to: 0.5, duration: 2), SKAction.fadeAlpha(to: 0.8, duration: 1)])
-        smoke.run( SKAction.repeatForever(action) )
-        
-        let alpha = SKAction.fadeAlpha(to: 0, duration: 10)
-        let scale = SKAction.scale(to: 0, duration: 10)
-        let move = SKAction.move(to: smoke.position, duration: 10)
-        self.believer.run( SKAction.group([alpha, scale, move]) )
-        self.believer.rootEvent = nil
-        
-        //event
-        let eater = SKSpriteNode(imageNamed: "kosaikin0")
-        eater.position = self.point_center() + CGPoint(x: self.size.width/2, y: self.size.height/2)
-        eater.size = CGSize(width: self.size.width, height: (self.size.width / eater.size.width) * eater.size.height)
-        eater.alpha = 0
-        self.addChild(eater)
-        
         if(self.believer.status.hp > 0){
             UserDefaults.standard.set(0, forKey: "zanki")
             
-            let eventAction = SKAction.sequence([
-                SKAction.wait(forDuration: 10),
-                SKAction.fadeAlpha(to: 0.5, duration: 3.5),
-                SKAction.fadeAlpha(to: 0, duration: 3),
-                SKAction.animate(with: [SKTexture(imageNamed: "kosaikin1")], timePerFrame: 0),
-                SKAction.fadeAlpha(to: 0.4, duration: 1),
-                SKAction.fadeAlpha(to: 0, duration: 2),
-                SKAction.animate(with: [SKTexture(imageNamed: "kosaikin2")], timePerFrame: 0),
-                SKAction.fadeAlpha(to: 0.8, duration: 0.5),
-                SKAction.run({
-                    world = Heaven()
-                    let view = self.view!
-                    world.size = view.frame.size
-                    view.presentScene(world)
-                    let actions = [SKAction.fadeAlpha(to: 0, duration: 0), SKAction.fadeAlpha(to: 1, duration: 1)]
-                    world.run( SKAction.sequence(actions) )
-                })
-            ])
-            eater.run(eventAction)
+            self.run(SKAction.sequence([
+                SKAction.wait(forDuration: 1),
+                SKAction.run{
+                    //delete nodes
+                    let animals = self.getNode(.animal)
+                    for a in animals.children{
+                        let animal = a as! Animal
+                        if (animal != self.believer){
+                            animal.removeFromParent()
+                        }
+                    }
+                    self.getNode(.energy).removeAllChildren()
+                    self.gauge.removeAllChildren()
+                    self.getNode(.block).run(SKAction.fadeAlpha(to: 0, duration: 5))
+                    
+                    //setting
+                    let smoke = SKSpriteNode(imageNamed: "smoke")
+                    smoke.position = self.point_center() + CGPoint(x: self.size.width/2, y: self.size.height/2)
+                    smoke.size = CGSize(width: self.size.width, height: (self.size.width / smoke.size.width) * smoke.size.height)
+                    self.addChild(smoke)
+                    let action = SKAction.sequence([SKAction.fadeAlpha(to: 0.5, duration: 2), SKAction.fadeAlpha(to: 0.8, duration: 1)])
+                    smoke.run( SKAction.repeatForever(action) )
+                    
+                    let alpha = SKAction.fadeAlpha(to: 0, duration: 10)
+                    let scale = SKAction.scale(to: 0, duration: 10)
+                    let move = SKAction.move(to: smoke.position, duration: 10)
+                    self.believer.run( SKAction.group([alpha, scale, move]) )
+                    self.believer.rootEvent = nil
+                    
+                    //event
+                    let eater = SKSpriteNode(imageNamed: "kosaikin0")
+                    eater.position = self.point_center() + CGPoint(x: self.size.width/2, y: self.size.height/2)
+                    eater.size = CGSize(width: self.size.width, height: (self.size.width / eater.size.width) * eater.size.height)
+                    eater.alpha = 0
+                    self.addChild(eater)
+                    
+                    let eventAction = SKAction.sequence([
+                        SKAction.wait(forDuration: 10),
+                        SKAction.fadeAlpha(to: 0.5, duration: 3.5),
+                        SKAction.fadeAlpha(to: 0, duration: 3),
+                        SKAction.animate(with: [SKTexture(imageNamed: "kosaikin1")], timePerFrame: 0),
+                        SKAction.fadeAlpha(to: 0.4, duration: 1),
+                        SKAction.fadeAlpha(to: 0, duration: 2),
+                        SKAction.animate(with: [SKTexture(imageNamed: "kosaikin2")], timePerFrame: 0),
+                        SKAction.fadeAlpha(to: 0.8, duration: 0.5),
+                        SKAction.run{
+                            world = Heaven()
+                            let view = self.view!
+                            world.size = view.frame.size
+                            view.presentScene(world)
+                            let actions = [SKAction.fadeAlpha(to: 0, duration: 0), SKAction.fadeAlpha(to: 1, duration: 1)]
+                            world.run( SKAction.sequence(actions) )
+                        }
+                    ])
+                    eater.run(eventAction)
+                }
+            ]))
             
         }
         

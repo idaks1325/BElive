@@ -23,8 +23,6 @@ class Heaven: World{
         super.open()
         
         self.believer = Shinkaku()
-        
-        self.point = 0
         self.run(nodeDirection: .under, runAction: false)
         
         //map
