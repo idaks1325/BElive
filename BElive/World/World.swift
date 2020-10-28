@@ -94,29 +94,35 @@ class World:SKScene, SKPhysicsContactDelegate{
     
     func initialize(){}
     
-    func point_center() -> CGPoint{
-        let point_xy = (x: CGFloat(point).truncatingRemainder(dividingBy: CGFloat(maps.size.x)), y: point / maps.size.x)
+    func point_center(area: (x:Int, y:Int)? = nil) -> CGPoint{
+        var point_xy: (x: CGFloat, y: Int)!
+        if(area != nil){
+            point_xy = (x: CGFloat(point).truncatingRemainder(dividingBy: CGFloat(area!.x)), y: point / area!.x)
+        }else{
+            point_xy = (x: CGFloat(point).truncatingRemainder(dividingBy: CGFloat(maps.size.x)), y: point / maps.size.x)
+        }
         return CGPoint(x: -1 * world.size.width * CGFloat(point_xy.x), y: -1 * world.size.height * CGFloat(point_xy.y))
     }
+
     
-    func getBeliverPosition(direction d:Direction) -> CGPoint{
+    func getWorldPosition(node: SKSpriteNode, direction d:Direction, area: (x:Int, y:Int)? = nil) -> CGPoint{
         let soutai = CGPoint(
-            x: self.believer.position.x.truncatingRemainder(dividingBy: self.size.width),
-            y: self.believer.position.y.truncatingRemainder(dividingBy: self.size.height)
+            x: node.position.x.truncatingRemainder(dividingBy: self.size.width),
+            y: node.position.y.truncatingRemainder(dividingBy: self.size.height)
         )
         var position: CGPoint!
         switch d {
         case .top:
-            position = CGPoint(x: soutai.x, y: world.size.height - world.size.height/8)
+            position = CGPoint(x: soutai.x, y: world.size.height - world.size.height/8 - node.size.height/2)
         case .under:
-            position = CGPoint(x: soutai.x, y: world.size.height/8)
+            position = CGPoint(x: soutai.x, y: world.size.height/8 + node.size.height/2)
         case .left:
-            position = CGPoint(x: world.size.width/6, y: soutai.y)
+            position = CGPoint(x: world.size.width/6 + node.size.width/2, y: soutai.y)
         case .right:
-            position = CGPoint(x: world.size.width - world.size.width/6, y: soutai.y)
+            position = CGPoint(x: world.size.width - world.size.width/6 - node.size.width/2, y: soutai.y)
         }
         
-        let world_position = self.point_center()
+        let world_position = self.point_center(area: area)
         return CGPoint(
             x: world_position.x * -1 + position.x,
             y: world_position.y * -1 + position.y
@@ -125,7 +131,7 @@ class World:SKScene, SKPhysicsContactDelegate{
     
     func run(nodeDirection d:Direction, runAction:Bool = true){
         let world_position = self.point_center()
-        let beliver_position = getBeliverPosition(direction: d)
+        let beliver_position = getWorldPosition(node: self.believer, direction: d)
         
         if (runAction){
             self.believer.run( SKAction.move(to: beliver_position, duration: 1), withKey:"areaAction")
@@ -226,7 +232,7 @@ class World:SKScene, SKPhysicsContactDelegate{
                 for n in animals{
                     let AnimalClass = NSClassFromString( self.maps.animals[n] ) as! Animal.Type
                     let a = AnimalClass.init()
-                    a.position = Random.position() + siten
+                    a.setInitializePosition(position: Random.position() + siten)
                 }
                 
                 

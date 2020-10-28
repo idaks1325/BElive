@@ -62,9 +62,17 @@ class Animal: ObjectNode,AnimalEvent {
         gauge = Gauge(animal: self)//beliverなら更新する
     }
     
+    func setInitializePosition(position: CGPoint){
+        self.position = position
+    }
+    
     func runAction() -> SKAction{
-        let moveAction = SKAction.move(by: angle.getVector(point: self.position), duration: self.status.duration)
-        return SKAction.repeatForever( moveAction )
+        if(self.status.duration > 0){
+            let moveAction = SKAction.move(by: angle.getVector(point: self.position), duration: self.status.duration)
+            return SKAction.repeatForever( moveAction )
+        }else{
+            return SKAction.run {}
+        }
     }
     
     override func initializeEnd() {
@@ -160,15 +168,13 @@ class Animal: ObjectNode,AnimalEvent {
     
     func hpEvent(){
         
-        if(self.rootEvent != nil){
+        if(self.status.hp > 0){
             gauge.set()
-            Uds.setStatus(is: self.status)
         }else{
-            if(self.status.hp > 0){
-                gauge.set()
-            }else{
-                self.removeFromParent()
-            }
+            self.removeFromParent()
+        }
+        if(self.rootEvent != nil){
+            Uds.setStatus(is: self.status)
         }
         
     }

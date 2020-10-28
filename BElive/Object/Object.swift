@@ -83,7 +83,7 @@ class ObjectNode: SKSpriteNode,Event {
         self.size = status.size
         
         let animation = SKAction.animate(with: AnimalAtlas.textures, timePerFrame: 0.3, resize: false, restore: true)
-        self.run(SKAction.repeatForever(animation))
+        self.run(SKAction.repeatForever(animation), withKey: "animation")
         
         world.addNode(self, parent: type)
         

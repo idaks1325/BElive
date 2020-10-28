@@ -12,7 +12,7 @@ class GenseiWorld: World{
     
     var map:[String : Any] = [
             "thema": "Gensei",
-            "animals": ["DeadProteo", "Proteo", "Owl", "Owl2"],
+            "animals": ["DeadProteo", "Proteo", "BigProteo"],
             "size": [5,5],
             "point": 0,
             "layout": [
@@ -42,7 +42,7 @@ class GenseiWorld: World{
                 
                 [ ["L","T"], 3, [1] ],
                 [ ["T"], 2, [] ],
-                [ ["T"], 5, [2] ],
+                [ ["T"], 5, [0] ],
                 [ ["T"], 2, [0] ],
                 [ ["T","R","B"], 2, [1,1,1] ],
             ]
@@ -156,7 +156,12 @@ class DeadProteo: Animal{
     override func initializeBegan() {
         super.initializeBegan()
         let size = CGSize(width: 50, height: 50)
-        self.status = Status(name: "proteo", size: size, duration: 1, sight: 30, maxHP: 30, atk: 2)
+        self.status = Status(name: "proteo", size: size, duration: 0, sight: 30, maxHP: 30, atk: 2)
+    }
+    override func initializeEnd(){
+        super.initializeEnd()
+        self.removeAction(forKey: "animation")
+        self.texture = SKTexture(imageNamed: "proteo0")
     }
 }
 
@@ -169,31 +174,19 @@ class Proteo: Animal{
     }
 }
 
-@objc(Owl)
-class Owl: Animal{
+@objc(BigProteo)
+class BigProteo: Animal{
     override func initializeBegan() {
         super.initializeBegan()
-        let size = CGSize(width: 50, height: 50)
-        self.status = Status(name: "owl", size: size, duration: 4, sight: 30, maxHP: 50, atk: 5)
+        let size = CGSize(width: 400, height: 200)
+        self.status = Status(name: "proteo", size: size, duration: 0, sight: 30, maxHP: 500, atk: 2)
+    }
+    override func initializeEnd(){
+        super.initializeEnd()
+        self.removeAction(forKey: "animation")
+        self.texture = SKTexture(imageNamed: "proteo2")
+    }
+    override func setInitializePosition(position: CGPoint){
+        self.position = world.getWorldPosition(node: self, direction: .under, area: (1, 1))
     }
 }
-
-@objc(Owl2)
-class Owl2: Animal{
-    override func initializeBegan() {
-        super.initializeBegan()
-        let size = CGSize(width: 50, height: 50)
-        self.status = Status(name: "scorpion", size: size, duration: 4, sight: 30, maxHP: 50, atk: 5)
-    }
-}
-
-@objc(Scorpion)
-class Scorpion: Animal{
-    override func initializeBegan() {
-        super.initializeBegan()
-        let size = CGSize(width: 50, height: 50)
-        self.status = Status(name: "scorpion", size: size, duration: 10, sight: 30, maxHP: 50, atk: 5)
-    }
-}
-
-
