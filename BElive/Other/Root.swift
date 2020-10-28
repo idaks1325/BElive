@@ -135,6 +135,7 @@ class freeRoot: rootEvent{
         
         self.speed = speed
         root = SKShapeNode()
+        root.zPosition = 1
         world.addNode(root, parent: .root, physics: false)
     }
     

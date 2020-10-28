@@ -75,7 +75,8 @@ class Animal: ObjectNode,AnimalEvent {
         }
     }
     
-    override func initializeEnd() {
+    override func addObject() {
+        super.addObject()
         self.run(runAction(), withKey:"runAction")
     }
     
@@ -97,7 +98,7 @@ class Animal: ObjectNode,AnimalEvent {
             }else{
                 if(!block.inEvent){
                     if world.base.action(forKey: "worldAction") == nil{
-                        self.experience(value: 20)
+                        self.hpEvent(hp: -10, exp: 20)
                         self.removeAction(forKey: "runAction")
                         
                         var direction: Direction!
@@ -151,22 +152,22 @@ class Animal: ObjectNode,AnimalEvent {
         
         //ENERGY
         if let energy = node as? Energy{
-            heal(value: 10)
+            hpEvent(hp: 10, exp: 5)
         }
     }
     
     //ぶつかったとき
     func contact_with(enemy: Animal){
-        enemy.damage(from: self)
+        enemy.hpEvent(hp: -1 * self.status.atk, exp: self.status.atk*2)
     }
     
-    func damage(from enemy: Animal){
-        self.status.hp -= enemy.status.atk
-        self.status.exp += enemy.status.atk * 2
-        hpEvent()
-    }
-    
-    func hpEvent(){
+    func hpEvent(hp: CGFloat, exp: CGFloat){
+        if(self.status.hp + hp > self.status.maxHP){
+            self.status.hp = self.status.maxHP
+        }else{
+            self.status.hp += hp
+        }
+        self.status.exp += exp
         
         if(self.status.hp > 0){
             gauge.set()
@@ -177,22 +178,6 @@ class Animal: ObjectNode,AnimalEvent {
             Uds.setStatus(is: self.status)
         }
         
-    }
-    
-    func heal(value: CGFloat){
-        self.status.exp += value / 2
-        if(self.status.hp + value > self.status.maxHP){
-            self.status.hp = self.status.maxHP
-        }else{
-            self.status.hp += value
-        }
-        hpEvent()
-    }
-    
-    func experience(value: CGFloat){
-        self.status.exp += value
-        self.status.hp -= value / 2
-        hpEvent()
     }
     
     //animalイベント

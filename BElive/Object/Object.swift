@@ -59,6 +59,7 @@ enum ObjectType: String, CaseIterable {
     case root//believerのroot
     case energy//行動せず一定のエネルギーだけを保持するもの
     
+    case Trap
     case block//マップ内の障害やエリア遷移などのイベントを発生させるもの
     func name() -> String{
         return "bodyname" + String(self.rawValue)
@@ -83,13 +84,12 @@ class ObjectNode: SKSpriteNode,Event {
         let AnimalAtlas = AnimalTextureAtlas(named: status.name)
         self.texture = AnimalAtlas.first
         self.size = status.size
+        self.zPosition = 1
         
         let animation = SKAction.animate(with: AnimalAtlas.textures, timePerFrame: 0.3, resize: false, restore: true)
         self.run(SKAction.repeatForever(animation), withKey: "animation")
         
-        world.addNode(self, parent: type)
-        
-        initializeEnd()
+        addObject()
     }
     //イベント
     func contact(with node: ObjectNode) {}
@@ -97,7 +97,9 @@ class ObjectNode: SKSpriteNode,Event {
     //statusやtextureを設定する
     func initializeBegan(){}
     
-    func initializeEnd(){}
+    func addObject(){
+        world.addNode(self, parent: type)
+    }
     
     override init(texture: SKTexture?, color: UIColor, size: CGSize) {
         super.init(texture: texture, color: color, size: size)
