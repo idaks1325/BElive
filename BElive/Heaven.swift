@@ -11,10 +11,9 @@ import SpriteKit
 class Heaven: World{
     
     var start_rest: SKSpriteNode!
-    var start_begin: SKSpriteNode!
+    var gamemessage: SKSpriteNode!
     
     override func initialize() {
-        
         let m = GenseiWorld()
         self.maps = Maps(m.map)
     }
@@ -30,54 +29,51 @@ class Heaven: World{
         //ゲーム開始
         if(!played){
             newGame()
+            return;
         }
         
         //ゲームクリア
         if(gamesclear == 1){
-            let gameover = SKLabelNode()
-            gameover.fontColor = UIColor.red
-            gameover.fontSize = 60
-            gameover.text = "クリア！"
-            gameover.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
-            self.addChild(gameover)
-            
-            let action = SKAction.sequence([SKAction.fadeAlpha(to: 0, duration: 2),SKAction.removeFromParent()])
-            gameover.run(action)
-            
             ud.set(2, forKey: "gameclear")
             ud.set(5, forKey: "zanki")
+            gamemessage.texture = SKTexture(imageNamed: "gameclear")
+            ends()
+            return;
         }
         
         //ゲームエンド
         if(gameend == 1){
-            let gameover = SKLabelNode()
-            gameover.fontColor = UIColor.red
-            gameover.fontSize = 60
-            gameover.text = "終わり！"
-            gameover.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
-            self.addChild(gameover)
-            
-            let action = SKAction.sequence([SKAction.fadeAlpha(to: 0, duration: 2),SKAction.removeFromParent()])
-            gameover.run(action)
-            
             newGame()
+            gamemessage.texture = SKTexture(imageNamed: "gameend")
+            ends()
+            return;
         }
         
+        gamemessage.texture = SKTexture(imageNamed: "zanki"+String(zanki))
         //ゲームオーバー
         if(zanki <= 0){
-            let gameover = SKLabelNode()
-            gameover.fontColor = UIColor.red
-            gameover.fontSize = 60
-            gameover.text = "GAMEOVER"
-            gameover.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
-            self.addChild(gameover)
-            
-            let action = SKAction.sequence([SKAction.fadeAlpha(to: 0, duration: 2),SKAction.removeFromParent()])
-            gameover.run(action)
-            
             newGame()
+            ends()
         }
         
+    }
+    func ends(){
+        let action = SKAction.sequence([
+            SKAction.scale(to: 2, duration: 2),
+            SKAction.run{
+                self.run(SKAction.fadeAlpha(by: 0, duration: 2))
+            },
+            SKAction.run{
+                world = Heaven()
+                let view = self.view!
+                world.size = view.frame.size
+                view.presentScene(world)
+                
+                let actions = [SKAction.fadeAlpha(to: 0, duration: 0), SKAction.fadeAlpha(to: 1, duration: 1)]
+                world.run( SKAction.sequence(actions) )
+            },
+        ])
+        gamemessage.run(action)
     }
     func newGame(){
         let ud = UserDefaults.standard
@@ -98,6 +94,14 @@ class Heaven: World{
         self.believer = Shinkaku()
         self.run(nodeDirection: .under, runAction: false)
         
+        gamemessage = SKSpriteNode(texture: SKTexture(imageNamed: "zanki5"))
+        gamemessage.size = CGSize(
+            width: gamemessage.size.width * (self.size.height/15 / gamemessage.size.height),
+            height: self.size.height/15
+        )
+        gamemessage.position = CGPoint(x: self.size.width/2, y: self.size.height - self.size.height/6)
+        self.addChild(gamemessage)
+        
         gameset()
         
         //map
@@ -116,21 +120,17 @@ class Heaven: World{
         start_rest.position = CGPoint(x: self.size.width/2, y: self.size.height/6)
         self.addChild(start_rest)
         
-        start_begin = SKSpriteNode(imageNamed: "start_begin")
-        start_begin.size = CGSize(width: start_begin.size.width * (self.size.height/18 / start_begin.size.height), height: self.size.height/18)
-        start_begin.anchorPoint = CGPoint(x: 0, y: 1)
-        start_begin.position = CGPoint(x: 0, y: self.size.height)
-        self.addChild(start_begin)
-        
         //label
         let ud = UserDefaults.standard
-        let zanki = ud.integer(forKey: "zanki")
-        let label = SKLabelNode()
-        label.fontColor = UIColor.white
-        label.fontSize = self.size.height/18
-        label.text = "残り"+String(zanki)+"回"
-        label.position = CGPoint(x: self.size.width/2, y: self.size.height - self.size.height/18)
-        self.addChild(label)
+        let clear = ud.integer(forKey: "gameclear")
+        if(clear != 0){
+            let label = SKLabelNode()
+            label.fontColor = UIColor.white
+            label.fontSize = self.size.height/36
+            label.text = "クリア済み"
+            label.position = CGPoint(x: self.size.width/2, y: self.size.height - self.size.height/36)
+            self.addChild(label)
+        }
     }
     
     var isTouched = false
@@ -160,8 +160,15 @@ class Heaven: World{
                 }
             }
             
-            if (touchedNode == start_begin){
+            if (touchedNode == gamemessage){
+                let ud = UserDefaults.standard
+                let zanki = ud.integer(forKey: "zanki")
+                ud.set(zanki - 1, forKey: "zanki")
                 
+                world = Heaven()
+                let view = self.view!
+                world.size = view.frame.size
+                view.presentScene(world)
             }
             
         }
