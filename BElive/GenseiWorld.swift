@@ -313,7 +313,8 @@ class Shiano: Animal{
         }
         
         let action = SKAction.sequence([
-            SKAction.wait(forDuration: 5),
+            SKAction.fadeAlpha(to: 0.4, duration: 3),
+            SKAction.fadeAlpha(to: 1, duration: 1),
             SKAction.fadeAlpha(to: 0.4, duration: 2),
             SKAction.fadeAlpha(to: 0.6, duration: 1.5),
             SKAction.fadeAlpha(to: 0, duration: 4),
