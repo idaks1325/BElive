@@ -92,12 +92,24 @@ class World:SKScene, SKPhysicsContactDelegate{
         
     }
     
-    func initialize(){}
+    func initialize(){
+    }
     
-    func point_center(area: (x:Int, y:Int)? = nil) -> CGPoint{
+    func getPointPosition(position: CGPoint, point getpoint:CGFloat? = nil) -> CGPoint{
+        var point_xy: (x: CGFloat, y: CGFloat)!
+        if(getpoint != nil){
+            point_xy = (x: CGFloat(getpoint!).truncatingRemainder(dividingBy: CGFloat(maps.size.x)), y: CGFloat(Int(getpoint!) / maps.size.x))
+        }else{
+            point_xy = (x: CGFloat(point).truncatingRemainder(dividingBy: CGFloat(maps.size.x)), y: CGFloat(point / maps.size.x))
+        }
+        let siten = CGPoint(x: world.size.width * point_xy.x, y: world.size.height * point_xy.y)
+        return siten + position
+    }
+    
+    func point_center(area: (x:CGFloat, y:Int)? = nil) -> CGPoint{
         var point_xy: (x: CGFloat, y: Int)!
         if(area != nil){
-            point_xy = (x: CGFloat(point).truncatingRemainder(dividingBy: CGFloat(area!.x)), y: point / area!.x)
+            point_xy = area!
         }else{
             point_xy = (x: CGFloat(point).truncatingRemainder(dividingBy: CGFloat(maps.size.x)), y: point / maps.size.x)
         }
@@ -105,7 +117,7 @@ class World:SKScene, SKPhysicsContactDelegate{
     }
 
     
-    func getWorldPosition(node: SKSpriteNode, direction d:Direction, area: (x:Int, y:Int)? = nil) -> CGPoint{
+    func getWorldPosition(node: SKSpriteNode, direction d:Direction, area: (x:CGFloat, y:Int)? = nil) -> CGPoint{
         let soutai = CGPoint(
             x: node.position.x.truncatingRemainder(dividingBy: self.size.width),
             y: node.position.y.truncatingRemainder(dividingBy: self.size.height)
@@ -123,10 +135,7 @@ class World:SKScene, SKPhysicsContactDelegate{
         }
         
         let world_position = self.point_center(area: area)
-        return CGPoint(
-            x: world_position.x * -1 + position.x,
-            y: world_position.y * -1 + position.y
-        )
+        return CGPoint(x: world_position.x * -1, y: world_position.y * -1) + position
     }
     
     func run(nodeDirection d:Direction, runAction:Bool = true){
@@ -154,31 +163,6 @@ class World:SKScene, SKPhysicsContactDelegate{
         }
     }
     
-    func newGame(){
-        let ud = UserDefaults.standard
-        let played = ud.bool(forKey: "played")
-        if(played){
-            //gameover
-            
-            let gameover = SKLabelNode()
-            gameover.fontColor = UIColor.red
-            gameover.fontSize = 60
-            gameover.text = "GAMEOVER"
-            gameover.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
-            self.addChild(gameover)
-            
-            let action = SKAction.sequence([SKAction.fadeAlpha(to: 0, duration: 2),SKAction.removeFromParent()])
-            gameover.run(action)
-            
-        }else{
-            ud.set(true, forKey: "played")
-        }
-        ud.set(self.maps.point, forKey: "point")
-        ud.set(3, forKey: "zanki")
-        ud.set(believer.status.maxHP, forKey: "status_hp")
-        ud.set(0, forKey: "status_exp")
-    }
-    
     func open(){
         
         //maps展開
@@ -186,8 +170,8 @@ class World:SKScene, SKPhysicsContactDelegate{
         
         for y in 0...(size.y-1){
             for x in 0...(size.x-1){
-                let c = (y * size.x) + x
-                let layout = self.maps.layout[c]
+                let thispoint = (y * size.x) + x
+                let layout = self.maps.layout[thispoint]
                 let siten = CGPoint(x: world.size.width * CGFloat(x), y: world.size.height * CGFloat(y))
                 
                 let thema = self.maps.thema
@@ -227,6 +211,16 @@ class World:SKScene, SKPhysicsContactDelegate{
                     }
                 }
                 
+                let gameclear = UserDefaults.standard.integer(forKey: "gameclear")
+                if(gameclear != 0 && (thispoint == 4 || thispoint == 8 || thispoint == 9 || thispoint == 14 || thispoint == 19)){
+                    let c = Int(CGFloat.random(in: 1...4))
+                    for i in 0...c{
+                        let EnergyClass = NSClassFromString( "Energy_"+thema ) as! Energy.Type
+                        let e = EnergyClass.init()
+                        e.position = Random.position() + siten
+                    }
+                }
+                
                 //ANIMAL
                 let animals = layout[2] as! [Int]
                 for n in animals{
@@ -234,7 +228,6 @@ class World:SKScene, SKPhysicsContactDelegate{
                     let a = AnimalClass.init()
                     a.setInitializePosition(position: Random.position() + siten)
                 }
-                
                 
             }
         }

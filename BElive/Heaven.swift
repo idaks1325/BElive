@@ -19,11 +19,86 @@ class Heaven: World{
         self.maps = Maps(m.map)
     }
     
+    func gameset(){
+        let ud = UserDefaults.standard
+        let played = ud.bool(forKey: "played")
+        let zanki = ud.integer(forKey: "zanki")
+        
+        let gamesclear = ud.integer(forKey: "gameclear")
+        let gameend = ud.integer(forKey: "gameend")
+        
+        //ゲーム開始
+        if(!played){
+            newGame()
+        }
+        
+        //ゲームクリア
+        if(gamesclear == 1){
+            let gameover = SKLabelNode()
+            gameover.fontColor = UIColor.red
+            gameover.fontSize = 60
+            gameover.text = "クリア！"
+            gameover.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
+            self.addChild(gameover)
+            
+            let action = SKAction.sequence([SKAction.fadeAlpha(to: 0, duration: 2),SKAction.removeFromParent()])
+            gameover.run(action)
+            
+            ud.set(2, forKey: "gameclear")
+            ud.set(5, forKey: "zanki")
+        }
+        
+        //ゲームエンド
+        if(gameend == 1){
+            let gameover = SKLabelNode()
+            gameover.fontColor = UIColor.red
+            gameover.fontSize = 60
+            gameover.text = "終わり！"
+            gameover.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
+            self.addChild(gameover)
+            
+            let action = SKAction.sequence([SKAction.fadeAlpha(to: 0, duration: 2),SKAction.removeFromParent()])
+            gameover.run(action)
+            
+            newGame()
+        }
+        
+        //ゲームオーバー
+        if(zanki <= 0){
+            let gameover = SKLabelNode()
+            gameover.fontColor = UIColor.red
+            gameover.fontSize = 60
+            gameover.text = "GAMEOVER"
+            gameover.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
+            self.addChild(gameover)
+            
+            let action = SKAction.sequence([SKAction.fadeAlpha(to: 0, duration: 2),SKAction.removeFromParent()])
+            gameover.run(action)
+            
+            newGame()
+        }
+        
+    }
+    func newGame(){
+        let ud = UserDefaults.standard
+        ud.set(true, forKey: "played")
+        ud.set(0, forKey: "gameclear")
+        ud.set(0, forKey: "gameend")
+        
+        ud.set(self.maps.point, forKey: "point")
+        ud.set(5, forKey: "zanki")
+        ud.set(believer.status.maxHP, forKey: "status_hp")
+        ud.set(0, forKey: "status_exp")
+        ud.set(0, forKey: "sanso")
+    }
+    
     override func open() {
         super.open()
         
         self.believer = Shinkaku()
         self.run(nodeDirection: .under, runAction: false)
+        
+        gameset()
         
         //map
         let size_y = self.size.height/3
@@ -49,20 +124,13 @@ class Heaven: World{
         
         //label
         let ud = UserDefaults.standard
-        var zanki = ud.integer(forKey: "zanki")
-        if(zanki <= 0){
-            self.newGame()
-            zanki = ud.integer(forKey: "zanki")
-        }
-        zanki = ud.integer(forKey: "zanki")
-        
+        let zanki = ud.integer(forKey: "zanki")
         let label = SKLabelNode()
         label.fontColor = UIColor.white
         label.fontSize = self.size.height/18
         label.text = "残り"+String(zanki)+"回"
         label.position = CGPoint(x: self.size.width/2, y: self.size.height - self.size.height/18)
         self.addChild(label)
-        
     }
     
     var isTouched = false

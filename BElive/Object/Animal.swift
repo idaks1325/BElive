@@ -8,37 +8,6 @@
 
 import SpriteKit
 
-class Uds{
-    class func setStatus(is status: Status){
-        let ud = UserDefaults.standard
-        if(status.hp <= 0){
-            //status初期化
-            ud.set(status.maxHP, forKey: "status_hp")
-            
-            //残機減らす
-            let zanki = ud.integer(forKey: "zanki") - 1
-            ud.set(zanki, forKey: "zanki")
-            
-            //暗転
-            world.run( SKAction.fadeAlpha(to: 0, duration: 1.5) )
-            var timer = Timer()
-            timer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false, block: { (timer) in
-                
-                let view = world.view!
-                world = Heaven()
-                world.size = view.frame.size
-                view.presentScene(world)
-                
-                world.run( SKAction.sequence([SKAction.fadeAlpha(to: 0, duration: 0), SKAction.fadeAlpha(to: 1, duration: 1)]) )
-                
-            })
-        }else{
-            ud.set(status.hp, forKey: "status_hp")
-            ud.set(status.exp, forKey: "status_exp")
-        }
-    }
-}
-
 protocol AnimalEvent{
     func ready()//押した時
     func charge()//押し続けている時
@@ -98,7 +67,7 @@ class Animal: ObjectNode,AnimalEvent {
             }else{
                 if(!block.inEvent){
                     if world.base.action(forKey: "worldAction") == nil{
-                        self.hpEvent(hp: -10, exp: 20)
+                        self.hpEvent(hp: -1 * self.status.hp/10, exp: self.status.hp/20)
                         self.removeAction(forKey: "runAction")
                         
                         var direction: Direction!
@@ -172,12 +141,42 @@ class Animal: ObjectNode,AnimalEvent {
         if(self.status.hp > 0){
             gauge.set()
         }else{
-            self.removeFromParent()
-        }
-        if(self.rootEvent != nil){
-            Uds.setStatus(is: self.status)
+            deadEvent()
         }
         
+    }
+    
+    func deadEvent(){
+        self.removeFromParent()
+        if(self.rootEvent != nil){
+            let ud = UserDefaults.standard
+            if(status.hp <= 0){
+                //status初期化
+                ud.set(status.maxHP, forKey: "status_hp")
+                
+                //残機減らす
+                let zanki = ud.integer(forKey: "zanki") - 1
+                ud.set(zanki, forKey: "zanki")
+                
+                //暗転
+                let action = SKAction.sequence([
+                    SKAction.fadeAlpha(to: 0, duration: 1.5),
+                    SKAction.run {
+                        let view = world.view!
+                        world = Heaven()
+                        world.size = view.frame.size
+                        view.presentScene(world)
+                        
+                        world.run( SKAction.sequence([SKAction.fadeAlpha(to: 0, duration: 0), SKAction.fadeAlpha(to: 1, duration: 1)]) )
+                    }
+                ])
+                world.run( action )
+                
+            }else{
+                ud.set(status.hp, forKey: "status_hp")
+                ud.set(status.exp, forKey: "status_exp")
+            }
+        }
     }
     
     //animalイベント
