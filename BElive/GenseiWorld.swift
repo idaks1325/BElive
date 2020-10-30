@@ -75,7 +75,7 @@ class GenseiWorld: World{
                         if(trap.name == "sanso2"){
                             sansodamage = 5
                         }else if(trap.name == "sanso1"){
-                            sansodamage = 3
+                            sansodamage = 2
                         }
                         
                         if let node = self.believer as? Shinkaku{
@@ -86,7 +86,7 @@ class GenseiWorld: World{
                     }
                 }
                 
-                self.believer.hpEvent(hp: -2, exp: 0)
+                self.believer.hpEvent(hp: -3, exp: 0)
             }
         ])
         believer.run(SKAction.repeatForever(actions))
@@ -97,7 +97,7 @@ class GenseiWorld: World{
         
         self.believer = Shinkaku()
         //self.believer.root(range: 40, length: 160)
-        self.believer.root(speed: 120)
+        self.believer.root(speed: 90)
         
         self.run(nodeDirection: .under, runAction: false)
         
