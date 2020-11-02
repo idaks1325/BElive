@@ -13,6 +13,7 @@ protocol rootEvent {
     func touchMove(drag: CGPoint)
     func touchEnd()
     func update()
+    func stop()
 }
 
 extension CGVector{
@@ -118,6 +119,10 @@ class lockedRoot: rootEvent{
         
         arcNode.path = path
     }
+    
+    func stop(){
+        canFollow = false
+    }
 }
 
 
@@ -179,6 +184,16 @@ class freeRoot: rootEvent{
     }
     
     func update() {}
+    
+    func stop(){
+        self.believer.removeAction(forKey: "runAction")
+        root.lineCap = .round
+        root.lineWidth = 5
+        
+        path = UIBezierPath()
+        path!.move(to: self.believer.position)
+        root.path = path!.cgPath
+    }
     
 }
 

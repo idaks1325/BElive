@@ -114,6 +114,7 @@ class Animal: ObjectNode,AnimalEvent {
                 self.run(action, withKey:"runAction")
             }else{
                 self.run(back)
+                self.rootEvent!.stop()
             }
             
             contact_with(enemy: enemy)

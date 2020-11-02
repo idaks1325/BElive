@@ -34,9 +34,9 @@ class GameViewController: UIViewController {
             world.size = view.frame.size
             view.presentScene(world)
             
-            view.ignoresSiblingOrder = true
-            view.showsFPS = true
-            view.showsNodeCount = true
+//            view.ignoresSiblingOrder = true
+//            view.showsFPS = true
+//            view.showsNodeCount = true
             
             self.viewInitiated = true
         }

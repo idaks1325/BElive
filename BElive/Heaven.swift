@@ -50,6 +50,12 @@ class Heaven: World{
         }
         
         gamemessage.texture = SKTexture(imageNamed: "zanki"+String(zanki))
+        let action = SKAction.sequence([
+            SKAction.scale(to: 0.9, duration: 0.2),
+            SKAction.scale(to: 1, duration: 1),
+            SKAction.wait(forDuration: 1)
+        ])
+        gamemessage.run( SKAction.repeatForever(action) )
         //ゲームオーバー
         if(zanki <= 0){
             newGame()

@@ -89,7 +89,7 @@ class GenseiWorld: World{
                 self.believer.hpEvent(hp: -3, exp: 0)
             }
         ])
-        believer.run(SKAction.repeatForever(actions))
+        believer.run(SKAction.repeatForever(actions), withKey: "stress")
     }
     
     override func open() {
@@ -117,6 +117,7 @@ class GenseiWorld: World{
         if(self.believer.status.hp > 0){
             UserDefaults.standard.set(1, forKey: "gameend")
             self.believer.rootEvent = nil
+            self.believer.removeAction(forKey: "stress")
             
             self.run(SKAction.sequence([
                 SKAction.wait(forDuration: 1),
@@ -161,12 +162,12 @@ class GenseiWorld: World{
                         SKAction.fadeAlpha(to: 0, duration: 3),
                         SKAction.animate(with: [SKTexture(imageNamed: "kosaikin1")], timePerFrame: 0),
                         SKAction.fadeAlpha(to: 0.5, duration: 0.6),
-                        SKAction.wait(forDuration: 0.6),
-                        SKAction.fadeAlpha(to: 0, duration: 1.6),
+                        SKAction.wait(forDuration: 0.4),
+                        SKAction.fadeAlpha(to: 0, duration: 0.7),
                         SKAction.wait(forDuration: 0.5),
                         SKAction.animate(with: [SKTexture(imageNamed: "kosaikin2")], timePerFrame: 0),
-                        SKAction.fadeAlpha(to: 0.8, duration: 0.4),
-                        SKAction.wait(forDuration: 0.2),
+                        SKAction.fadeAlpha(to: 0.8, duration: 0.3),
+                        SKAction.wait(forDuration: 0.3),
                         SKAction.run{
                             world = Heaven()
                             let view = self.view!
@@ -232,12 +233,7 @@ class DeadProteo: Animal{
     override func initializeBegan() {
         super.initializeBegan()
         let size = CGSize(width: 50, height: 50)
-        self.status = Status(name: "proteo", size: size, duration: 0, sight: 30, maxHP: 30, atk: 5)
-    }
-    override func addObject(){
-        super.addObject()
-        self.removeAction(forKey: "animation")
-        self.texture = SKTexture(imageNamed: "proteo0")
+        self.status = Status(name: "dead_proteo", size: size, duration: 0, sight: 30, maxHP: 30, atk: 2)
     }
 }
 
@@ -290,6 +286,7 @@ class Shiano: Animal{
         
         UserDefaults.standard.set(1, forKey: "gameclear")
         world.believer.rootEvent = nil
+        world.believer.removeAction(forKey: "stress")
         
         for i in 0...150{
             let energy = SKSpriteNode(imageNamed: "gensei_energy0")
@@ -329,4 +326,11 @@ class Shiano: Animal{
         ])
         world.run( action )
     }
+    
+    override func contact_with(enemy: Animal){
+        if (enemy.rootEvent == nil){
+            self.hpEvent(hp: 20 * self.status.atk, exp: self.status.atk*2)
+        }
+    }
+    
 }
