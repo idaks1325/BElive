@@ -116,9 +116,20 @@ class Heaven: World{
             x: world.size.width * CGFloat(world.maps.size.x),
             y: world.size.height * CGFloat(world.maps.size.y)
         )
+        self.base.position = point_center(area: (2, 4))
         let wariai = size_y / pos.y
-        self.base.setScale( wariai )
-        self.base.position = CGPoint(x: self.size.width/2 - (pos.x/2 * wariai), y: self.size.height/2 - (pos.y/2 * wariai))
+        let to = CGPoint(
+            x: self.size.width/2 - (pos.x/2 * wariai),
+            y: self.size.height/2 - (pos.y/2 * wariai)
+        )
+        let actions = SKAction.sequence([
+            SKAction.wait(forDuration: 1),
+            SKAction.group([
+                SKAction.scale(to: wariai, duration: 3),
+                SKAction.move(to: to, duration: 3)
+            ])
+        ])
+        self.base.run(actions)
         
         //button
         start_rest = SKSpriteNode(imageNamed: "start_rest")
