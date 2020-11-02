@@ -37,14 +37,14 @@ class GenseiWorld: World{
                 [ ["L"], 6, [] ],
                 [ [], 6, [1] ],
                 [ [], 4, [1] ],
-                [ ["R"], 3, [0] ],
+                [ [], 3, [0] ],
                 [ ["R"], 0, [] ],
                 
                 [ ["L","T"], 6, [1] ],
                 [ ["T"], 7, [] ],
                 [ ["T"], 8, [3] ],
-                [ ["T"], 7, [0] ],
-                [ ["T","R"], 9, [1,1,1] ],
+                [ ["T"], 7, [1] ],
+                [ ["T","R"], 9, [1] ],
             ]
     ]
     
@@ -191,7 +191,7 @@ class Shinkaku: Animal{
     override func initializeBegan() {
         super.initializeBegan()
         let size = CGSize(width: 50, height: 50)
-        self.status = Status(name: "shinkaku", size: size, duration: 10, sight: 30, maxHP: 100, atk: 10)
+        self.status = Status(name: "shinkaku", size: size, duration: 0, sight: 30, maxHP: 100, atk: 10)
     }
     
     override func addObject(){
@@ -203,13 +203,13 @@ class Shinkaku: Animal{
         super.contact(with: node)
         
         if (node is DeadProteo){
-            addTaisei(val: 2)
+            addTaisei(val: 4)
         }
         if (node is Proteo){
-            addTaisei(val: 5)
+            addTaisei(val: 7)
         }
         if (node is Shiano){
-            addTaisei(val: -5)
+            addTaisei(val: -20)
         }
     }
     
@@ -242,7 +242,7 @@ class Proteo: Animal{
     override func initializeBegan() {
         super.initializeBegan()
         let size = CGSize(width: 50, height: 50)
-        self.status = Status(name: "proteo", size: size, duration: 20, sight: 30, maxHP: 200, atk: 20)
+        self.status = Status(name: "proteo", size: size, duration: 10, sight: 30, maxHP: 100, atk: 15)
     }
 }
 
@@ -268,7 +268,7 @@ class Shiano: Animal{
     override func initializeBegan() {
         super.initializeBegan()
         let size = CGSize(width: 70, height: 70)
-        self.status = Status(name: "shiano", size: size, duration: 0, sight: 30, maxHP: 200, atk: 5)
+        self.status = Status(name: "shiano", size: size, duration: 0, sight: 30, maxHP: 150, atk: 10)
     }
     
     override func setInitializePosition(position: CGPoint){

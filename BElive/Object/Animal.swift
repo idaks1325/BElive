@@ -122,7 +122,7 @@ class Animal: ObjectNode,AnimalEvent {
         
         //ENERGY
         if let energy = node as? Energy{
-            hpEvent(hp: 10, exp: 5)
+            hpEvent(hp: 15, exp: 5)
         }
     }
     
