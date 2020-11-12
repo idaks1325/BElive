@@ -168,13 +168,16 @@ class GenseiWorld: World{
                         SKAction.animate(with: [SKTexture(imageNamed: "kosaikin2")], timePerFrame: 0),
                         SKAction.fadeAlpha(to: 0.8, duration: 0.3),
                         SKAction.wait(forDuration: 0.3),
+                        SKAction.fadeAlpha(to: 0, duration: 0),
+                        SKAction.run{
+                            world.run(SKAction.fadeAlpha(to: 0, duration: 0))
+                        },
+                        SKAction.wait(forDuration: 0.5),
                         SKAction.run{
                             world = Heaven()
                             let view = self.view!
                             world.size = view.frame.size
                             view.presentScene(world)
-                            let actions = [SKAction.fadeAlpha(to: 0, duration: 0), SKAction.fadeAlpha(to: 1, duration: 1)]
-                            world.run( SKAction.sequence(actions) )
                         }
                     ])
                     eater.run(eventAction)

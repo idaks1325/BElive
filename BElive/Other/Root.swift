@@ -168,11 +168,12 @@ class freeRoot: rootEvent{
                 x: point.x.truncatingRemainder(dividingBy: world.size.width),
                 y: point.y.truncatingRemainder(dividingBy: world.size.height)
             )
-            if let block = world.atPoint(node_point) as? Block{
-                return;
+            
+            if (world.physicsWorld.body(at: node_point)?.node as? Block) == nil{
+                p.addLine(to: point)
+                root.path = p.cgPath
             }
-            p.addLine(to: point)
-            root.path = p.cgPath
+            
         }
     }
     

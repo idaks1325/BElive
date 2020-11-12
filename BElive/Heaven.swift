@@ -106,6 +106,7 @@ class Heaven: World{
             height: self.size.height/15
         )
         gamemessage.position = CGPoint(x: self.size.width/2, y: self.size.height - self.size.height/6)
+        gamemessage.zPosition = 5
         self.addChild(gamemessage)
         
         gameset()
@@ -135,6 +136,7 @@ class Heaven: World{
         start_rest = SKSpriteNode(imageNamed: "start_rest")
         start_rest.size = CGSize(width: start_rest.size.width * (self.size.height/6 / start_rest.size.height), height: self.size.height/6)
         start_rest.position = CGPoint(x: self.size.width/2, y: self.size.height/6)
+        start_rest.zPosition = 5
         self.addChild(start_rest)
         
         //label
@@ -146,6 +148,7 @@ class Heaven: World{
             label.fontSize = self.size.height/36
             label.text = "クリア済み"
             label.position = CGPoint(x: self.size.width/2, y: self.size.height - self.size.height/36)
+            label.zPosition = 5
             self.addChild(label)
         }
     }
@@ -182,10 +185,16 @@ class Heaven: World{
                 let zanki = ud.integer(forKey: "zanki")
                 ud.set(zanki - 1, forKey: "zanki")
                 
-                world = Heaven()
-                let view = self.view!
-                world.size = view.frame.size
-                view.presentScene(world)
+                self.run( SKAction.sequence([
+                    SKAction.fadeAlpha(to: 0, duration: 0.5),
+                    SKAction.run({
+                        world = Heaven()
+                        let view = self.view!
+                        world.size = view.frame.size
+                        view.presentScene(world)
+                    })
+                ]) )
+                
             }
             
         }

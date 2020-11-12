@@ -14,12 +14,14 @@ struct AnimalTextureAtlas {
     var first: SKTexture!
     
     init(named: String){
-        let atlas = SKTextureAtlas(named: named)
-        for c in 0...(atlas.textureNames.count-1){
-            textures.append(atlas.textureNamed( named + String(c) ))
-        }
-        
         first = SKTexture(imageNamed: named + "0")
+        for c in 0...10{
+            if UIImage(named: named + String(c)) != nil{
+                textures.append( SKTexture(imageNamed: named + String(c)) )
+            }else{
+                break
+            }
+        }
     }
 }
 

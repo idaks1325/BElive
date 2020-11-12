@@ -55,6 +55,7 @@ class World:SKScene, SKPhysicsContactDelegate{
             if(believer.rootEvent != nil){
                 believer.rootEvent!.touchBegan(location: location)
             }
+            
         }
     }
     
@@ -168,6 +169,16 @@ class World:SKScene, SKPhysicsContactDelegate{
         //maps展開
         let size = self.maps.size
         
+        let background = SKSpriteNode(imageNamed: "background")
+        background.size = CGSize(width: world.size.width * 5, height: world.size.height * 5)
+        background.position = CGPoint(x: background.size.width / 2, y: background.size.height / 2)
+        background.zPosition = -10
+        self.base.addChild(background)
+        
+        let blockA = Block_Back_A()
+        blockA.position = CGPoint(x: blockA.size.width / 2, y: blockA.size.height / 2)
+        blockA.zPosition = -5
+        
         for y in 0...(size.y-1){
             for x in 0...(size.x-1){
                 let thispoint = (y * size.x) + x
@@ -176,30 +187,14 @@ class World:SKScene, SKPhysicsContactDelegate{
                 
                 let thema = self.maps.thema
                 
-                //BLOCK
-                let block = layout[0] as! [String]
-                let array = [
-                    "T": CGPoint(x: world.size.width/2, y: world.size.height) + siten,
-                    "B": CGPoint(x: world.size.width/2, y: 0) + siten,
-                    "L": CGPoint(x: 0, y: world.size.height/2) + siten,
-                    "R": CGPoint(x: world.size.width, y: world.size.height/2) + siten
-                ]
-                for (str, point) in array{
-                    var b: SKNode!
-                    if block.firstIndex(of: str) != nil {
-                        let classname = (str == "T" || str == "B") ? "Block_"+thema+"_yoko" : "Block_"+thema+"_tate"
-                        let BlockClass = NSClassFromString( classname ) as! Block.Type
-                        b = BlockClass.init()
-                        b.zPosition = 2
-                        b.position = point
-                    }else{
-                        if(str == "B" || str == "L"){
-                            b = (str == "T" || str == "B") ? Block_Bezel_yoko() : Block_Bezel_tate()
-                            b.zPosition = 1
-                            b.position = point
-                        }
-                    }
-                }
+                //BLOCK Bezel
+                let bezel_b = Block_Bezel_yoko()
+                bezel_b.zPosition = -5
+                bezel_b.position = CGPoint(x: world.size.width/2, y: 0) + siten
+                
+                let bezel_l = Block_Bezel_tate()
+                bezel_l.zPosition = -5
+                bezel_l.position = CGPoint(x: 0, y: world.size.height/2) + siten
                 
                 //ENERGY
                 let energy_c = layout[1] as! Int
@@ -241,30 +236,37 @@ class World:SKScene, SKPhysicsContactDelegate{
     //updateなどのイベントを振り分けるために分ける
         func addNode(_ node:SKNode, parent:ObjectType, physics:Bool = true){
             if(physics){
+                let sknode = node as! SKSpriteNode
                 
-    //            if let sknode = node as? SKSpriteNode{
-    //                if let texture = sknode.texture {
-    //                    node.physicsBody = SKPhysicsBody(texture: texture, size: sknode.size)
-    //                }
-    //            }
-                
-                if let sknode = node as? SKSpriteNode{
-                    node.physicsBody = SKPhysicsBody(rectangleOf: sknode.size)
+                var isDeepPhysics = false
+                if let block = sknode as? Block{
+                    if (block.inEvent){
+                        isDeepPhysics = true
+                    }
                 }
-                node.physicsBody?.affectedByGravity = false//重力を無視
-                node.physicsBody?.isDynamic = true//衝撃を無視
-                node.physicsBody?.allowsRotation = false//衝撃を無視
-                node.physicsBody?.usesPreciseCollisionDetection = true
+//                if sknode is Animal{
+//                    isDeepPhysics = true
+//                }
+                if(isDeepPhysics){
+                    sknode.physicsBody = SKPhysicsBody(texture: sknode.texture!.pristineCopy(), size: sknode.size)
+                }else{
+                    sknode.physicsBody = SKPhysicsBody(rectangleOf: sknode.size)
+                }
                 
-                node.physicsBody?.contactTestBitMask = UInt32(1) | UInt32(2)
-                node.physicsBody?.collisionBitMask = UInt32(1)
-                node.physicsBody?.categoryBitMask = UInt32(1)
+                sknode.physicsBody?.affectedByGravity = false//重力を無視
+                sknode.physicsBody?.isDynamic = true//衝撃を無視
+                sknode.physicsBody?.allowsRotation = false//衝撃を無視
+                sknode.physicsBody?.usesPreciseCollisionDetection = true
+                
+                sknode.physicsBody?.contactTestBitMask = UInt32(1) | UInt32(2)
+                sknode.physicsBody?.collisionBitMask = UInt32(1)
+                sknode.physicsBody?.categoryBitMask = UInt32(1)
                 
                 if(parent == .block){
-                    node.physicsBody?.isDynamic = false
-                    if let blocks = node as? Block{
+                    sknode.physicsBody?.isDynamic = false
+                    if let blocks = sknode as? Block{
                         if(!blocks.inEvent){
-                            node.physicsBody?.categoryBitMask = UInt32(2)
+                            sknode.physicsBody?.categoryBitMask = UInt32(2)
                         }
                     }
                 }
@@ -275,3 +277,9 @@ class World:SKScene, SKPhysicsContactDelegate{
         }
 }
 
+
+extension SKTexture{
+  func pristineCopy() -> SKTexture{
+    return SKTexture(cgImage:self.cgImage())
+  }
+}

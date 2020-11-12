@@ -21,6 +21,18 @@ class Block: ObjectNode {
     }
 }
 
+@objc(Block_Back_A)
+class Block_Back_A: Block {
+    
+    override func initializeBegan() {
+        super.initializeBegan()
+        
+        self.status.name = "background_block_a"
+        self.status.size = CGSize(width: world.size.width * 5, height: world.size.height * 5)
+    }
+    
+}
+
 //---------------
 
 @objc(Block_Bezel_tate)
@@ -31,7 +43,7 @@ class Block_Bezel_tate: Block {
         inEvent = false
         
         self.status.name = "bezel_tate"
-        self.status.size = CGSize(width: world.size.width/12, height: world.size.height)
+        self.status.size = CGSize(width: world.size.width/12/4, height: world.size.height)
     }
 }
 
@@ -43,29 +55,6 @@ class Block_Bezel_yoko: Block {
         inEvent = false
         
         self.status.name = "bezel_yoko"
-        self.status.size = CGSize(width: world.size.width, height: world.size.height/16)
+        self.status.size = CGSize(width: world.size.width, height: world.size.height/16/4)
     }
 }
-
-//---------------
-
-@objc(Block_Gensei_tate)
-class Block_Gensei_tate: Block {
-    
-    override func initializeBegan() {
-        super.initializeBegan()
-        self.status.name = "gensei_tate"
-        self.status.size = CGSize(width: world.size.width/3, height: world.size.height)
-    }
-}
-
-@objc(Block_Gensei_yoko)
-class Block_Gensei_yoko: Block {
-    
-    override func initializeBegan() {
-        super.initializeBegan()
-        self.status.name = "gensei_yoko"
-        self.status.size = CGSize(width: world.size.width, height: world.size.height/4)
-    }
-}
-
