@@ -26,6 +26,8 @@ class World:SKScene, SKPhysicsContactDelegate{
     
     var believer: Animal!
     
+    var noPhysics = false
+    
     override func didMove(to view: SKView) {
         self.backgroundColor = UIColor.black
         self.physicsWorld.contactDelegate = self
@@ -235,7 +237,7 @@ class World:SKScene, SKPhysicsContactDelegate{
     
     //updateなどのイベントを振り分けるために分ける
         func addNode(_ node:SKNode, parent:ObjectType, physics:Bool = true){
-            if(physics){
+            if(physics && !noPhysics){
                 let sknode = node as! SKSpriteNode
                 
                 var isDeepPhysics = false

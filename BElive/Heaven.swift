@@ -14,6 +14,7 @@ class Heaven: World{
     var gamemessage: SKSpriteNode!
     
     override func initialize() {
+        noPhysics = true
         let m = GenseiWorld()
         self.maps = Maps(m.map)
     }
