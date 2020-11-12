@@ -67,8 +67,9 @@ class Heaven: World{
         let action = SKAction.sequence([
             SKAction.scale(to: 2, duration: 2),
             SKAction.run{
-                self.run(SKAction.fadeAlpha(by: 0, duration: 2))
+                self.run(SKAction.fadeAlpha(to: 0, duration: 2))
             },
+            
             SKAction.run{
                 world = Heaven()
                 let view = self.view!

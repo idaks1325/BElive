@@ -92,6 +92,10 @@ class Animal: ObjectNode,AnimalEvent {
                         world.run(nodeDirection: direction)
                         
                     }
+                }else{
+                    //self.removeAction(forKey: "runAction")
+                    //self.run(back)
+                    //self.rootEvent!.stop()
                 }
             }
         }

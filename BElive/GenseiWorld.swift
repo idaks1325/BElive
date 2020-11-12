@@ -25,7 +25,7 @@ class GenseiWorld: World{
                 [ ["L"], 5, [0] ],
                 [ ["B"], 6, [] ],
                 [ ["B","R"], 4, [0] ],
-                [ [], 0, [2] ],
+                [ [], 0, [] ],
                 [ ["R"], 0, [] ],
                 
                 [ ["L"], 4, [] ],
@@ -116,6 +116,7 @@ class GenseiWorld: World{
     func DinnerEvent(){
         if(self.believer.status.hp > 0){
             UserDefaults.standard.set(1, forKey: "gameend")
+            self.believer.rootEvent!.stop()
             self.believer.rootEvent = nil
             self.believer.removeAction(forKey: "stress")
             
