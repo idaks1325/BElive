@@ -262,9 +262,6 @@ class BigProteo: Animal{
         self.removeAction(forKey: "animation")
         self.texture = SKTexture(imageNamed: "proteo2")
     }
-//    override func setInitializePosition(position: CGPoint){
-//        self.position = world.getWorldPosition(node: self, direction: .under, area: (1, 1))
-//    }
 }
 
 @objc(Shiano)
@@ -272,17 +269,23 @@ class Shiano: Animal{
     override func initializeBegan() {
         super.initializeBegan()
         let size = CGSize(width: 70, height: 70)
-        self.status = Status(name: "shiano", size: size, duration: 0, sight: 30, maxHP: 150, atk: 10)
+        self.status = Status(name: "shiano", size: size, duration: 0, sight: 30, maxHP: 110, atk: 10)
     }
     
     override func setInitializePosition(position: CGPoint){
         super.setInitializePosition(position: position)
         
-        let sanso = SansoBig()
-        sanso.position = self.position
-        
-        let sanso2 = SansoSmall()
-        sanso2.position = self.position
+        let ud = UserDefaults.standard
+        let clear = ud.integer(forKey: "gameclear")
+        if(clear != 0){
+            self.removeFromParent()
+        }else{
+            let sanso = SansoBig()
+            sanso.position = self.position
+            
+            let sanso2 = SansoSmall()
+            sanso2.position = self.position
+        }
     }
     
     override func deadEvent() {

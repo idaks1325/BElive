@@ -152,6 +152,12 @@ class Heaven: World{
             label.position = CGPoint(x: self.size.width/2, y: self.size.height - self.size.height/36)
             label.zPosition = 5
             self.addChild(label)
+            
+            let background = SKSpriteNode(imageNamed: "clearground")
+            background.size = CGSize(width: self.size.width, height: self.size.height)
+            background.position = CGPoint(x: background.size.width / 2, y: background.size.height / 2)
+            background.zPosition = -20
+            self.addChild(background)
         }
     }
     
